@@ -35,10 +35,8 @@ def iter_flow(data, function, cores=cpu_count()):
         p.join()
         
     results = [queue.get() for p in processes]
-
-    result = np.sum(results)
     
-    return result
+    return results
 
 
 def list_flow(data_list, function, cores=cpu_count()):
