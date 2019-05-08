@@ -2,6 +2,16 @@ import pandas as pd
 
 
 def single_total(iterable):
+    """This example function sums the data contained in a single iterable, i.e.
+    a list, tuple, set, pd.Series, etc.
+    
+    Args:
+        iterable (list, tuple, set, pd.Series, etc): Any iterable that holds data
+            that can be added together.
+            
+    Returns:
+        total (int): Sum of passed iterable.
+    """
     
     total = 0
     
@@ -12,6 +22,18 @@ def single_total(iterable):
 
 
 def multi_tally(pddf):
+    """This example function sums each row of a Pandas DataFrame, then increases
+    the total count if the sum is greater than 25.
+    
+    Args:
+        pddf (:obj: pd.DataFrame): Pandas DataFrame. laminar_examples.laminar_df
+            may be used as an example. It contains 3 columns ['Col1', 'Col2', 'Col3'],
+            each of which contains integer values.
+            
+    Returns:
+        total (int): Number of rows in pddf that summed to greater than 25.
+        
+    """
     
     total = 0
     
