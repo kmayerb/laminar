@@ -70,21 +70,21 @@ where
 
 #### Example 2: Pandas DataFrame, multi_tally()
 `laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)` returns
-`{'data[0-5]': 3,
+`{'data[0-5]': 3,`
 
- 'data[12-17]': 6,
+ `'data[12-17]': 6,`
  
- 'data[18-23]': 6,
+ `'data[18-23]': 6,`
  
- 'data[24-29]': 6,
+ `'data[24-29]': 6,`
  
- 'data[30-34]': 5,
+ `'data[30-34]': 5,`
  
- 'data[35-39]': 5,
+ `'data[35-39]': 5,`
  
- 'data[40-44]': 5,
+ `'data[40-44]': 5,`
  
- 'data[6-11]': 6}`,
+ `'data[6-11]': 6}`,
  
  which is a dict of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
