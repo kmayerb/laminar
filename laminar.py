@@ -74,11 +74,12 @@ def iter_flow(function, data, *args, **kwargs):
     
     processes = []    
     
-    i = 0
+    end = -1
     for dataset in data_split:
-        new_process = Process(name="data_position_{}".format(i), target=__converter, args=(function, dataset, queue, args, kwargs))
+        start = end + 1
+        end += len(dataset)
+        new_process = Process(name="data[{}-{}]".format(start, end), target=__converter, args=(function, dataset, queue, args, kwargs))
         processes.append(new_process)
-        i += 1
     
     for p in processes:
         p.start()
