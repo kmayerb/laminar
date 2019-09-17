@@ -1,4 +1,4 @@
-from multiprocessing import Queue, Process, cpu_count, current_process
+from multiprocessing import Queue, Process, cpu_count
 
 import numpy as np
 
