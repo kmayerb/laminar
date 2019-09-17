@@ -111,27 +111,33 @@ where
 `'data_position_1': 1800,`  
 `'data_position_2': 2925,`  
 `}`  
-which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
+which is a list of the totals for each column in `laminar_examples.laminar_df`. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 
 `columns_list = [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns]`
 
-`result = laminar.list_flow(columns_list, laminar_examples.single_total)`
+`result = laminar.list_flow(laminar_examples.single_total, columns_list)`
 
 where
 
-`result = [675, 1800, 2925]`
+`result = {'data_position_0': 675, 'data_position_1': 1800, 'data_position_2': 2925}`
 
 
 #### Example 4: List of Pandas DataFrames, multi_tally()
-`laminar.list_flow([laminar_examples.laminar_df]*3, laminar_examples.multi_tally)` returns `[42, 42, 42]`. The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
+`laminar.list_flow(laminar_examples.multi_tally, [laminar_examples.laminar_df]*3)` returns  
+`{`  
+`'data_position_0': 42,`  
+`'data_position_1': 42,`  
+`'data_position_2': 42,`  
+`}`.  
+The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
 
 `data_frames_list = [laminar_examples.laminar_df]*3`
 
-`result = laminar.list_flow(data_frames_list, laminar_examples.multi_tally)`
+`result = laminar.list_flow(laminar_examples.multi_tally, data_frames_list)`
 
 where
 
-`result = [42, 42, 42]`
+`result = {'data_position_0': 42, 'data_position_1': 42, 'data_position_2': 42}`
 
 ### Final Notes
 Which laminar tool a user will use depends on the structure of their data and the function that will be applied to that data. `laminar.list_flow` is not confined to operating on Pandas DataFrames; any list of data objects can be passed to list_flow.
