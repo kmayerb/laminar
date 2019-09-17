@@ -55,7 +55,7 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 `'data[30-34]': 105,`  
 `'data[35-39]': 120,`  
 `'data[40-44]': 135,`  
-`'data[6-11]': 37`  
+`'data[6-11]': 37,`  
 `}` 
 
 which is a dictionary describing the results for each section of your data. Each key/value pair in the returned dict corresponds to a segment of the iterable that was broken out and given to a process, with the key containing which portion of the data the result matches to. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
@@ -76,6 +76,7 @@ where
 
 #### Example 2: Pandas DataFrame, multi_tally()
 `laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)` returns  
+
 `{`  
 `'data[0-5]': 3,`  
 `'data[12-17]': 6,`  
@@ -84,8 +85,8 @@ where
 `'data[30-34]': 5,`   
 `'data[35-39]': 5,`   
 `'data[40-44]': 5,`   
-`'data[6-11]': 6`  
-`}`,
+`'data[6-11]': 6,`  
+`}`
  
  which is a dict of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
