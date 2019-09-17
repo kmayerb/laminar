@@ -51,3 +51,4 @@ def multi_tally(pddf):
 __df = pd.DataFrame({'Col1': [1, 2, 3, 4, 5], 'Col2': [6, 7, 8, 9, 10], 'Col3': [11, 12, 13, 14, 15]})
 __increasing_df = [__df*i for i in range(1, 10)]
 laminar_df = pd.concat(__increasing_df)
+laminar_df.reset_index(drop=True, inplace=True)
