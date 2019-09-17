@@ -1,17 +1,18 @@
-from multiprocessing import Queue, Process, cpu_count
+from multiprocessing import Queue, Process, cpu_count, current_process
 
 import numpy as np
 
 
 def __converter(function, data_shard, queue, *args):
     """Module function that calls the passed function with the passed data_shard
-    as an argument, then places the result in the queue.
+    as an argument, then places the result in the queue. Also passes through any
+    args required for the function (if passed in).
     
     Args:
         function: Function object the user wishes to parallelize.
-        queue: Multiprocessing queue that holds process results.
         data_shard: Data object that is a subset of the master data object passed
             to the laminar function.
+        queue: Multiprocessing queue that holds process results.
             
     Returns:
         None
@@ -26,8 +27,10 @@ def __converter(function, data_shard, queue, *args):
 
 
 def iter_flow(function, data, *args, **kwargs):
-    """Parallelization function that is intended to break up an iterable into data shards,
-    then analyze each data shard in parallel. Returns a list of results from each
+    """Parallelizes analysis of a list.
+    
+    Parallelization function that breaks up an iterable into data shards,
+    then analyzes each data shard in parallel. Returns a list of results from each
     data shard.
     
     Args:
@@ -39,10 +42,21 @@ def iter_flow(function, data, *args, **kwargs):
                     Default is number of cores present on the current machine.
             
     Returns:
-        results (list): List of results from each parallel process.
+        results (dict): Dictionary of results from each parallel process, named
+            according to position in data iterable.
+            
+        Example: 
+            {'data_position_0': 17,
+             'data_position_1': 37,
+             'data_position_2': 60,
+             'data_position_3': 86,
+             'data_position_4': 115,
+             'data_position_5': 105,
+             'data_position_6': 120,
+             'data_position_7': 135}
             
     """
-    
+        
     cores = kwargs.pop('cores', cpu_count())
     
     if cores > cpu_count():
@@ -58,32 +72,48 @@ def iter_flow(function, data, *args, **kwargs):
     
     queue = Queue()
     
-    processes = [Process(target=__converter, args=(function, data_shard, queue, args, kwargs)) for data_shard in data_split]
-        
+    processes = []    
+    
+    i = 0
+    for dataset in data_split:
+        new_process = Process(name="data_position_{}".format(i), target=__converter, args=(function, dataset, queue, args, kwargs))
+        processes.append(new_process)
+        i += 1
+    
     for p in processes:
         p.start()
         
     for p in processes:
         p.join()
         
-    results = [queue.get() for p in processes]
+    results = {p.name: queue.get() for p in processes}
     
     return results
 
 
 def list_flow(function, data_list, *args, **kwargs):
-    """Parallelization function that is intended to send each data object in a list
-    to its own process to be analyzed in parallel. Returns a list of results from
-    each process.
+    """Parallelizes analysis of a list.
+    
+    Parallelization function that sends each data object in a list to its own 
+    process to be analyzed in parallel. Returns a list of results from each process.
     
     Args:
-        data_lsit (list): List of data objects to be analyzed in parallel.
         function: Function with which to analyze data.
-        cores: Number of cores to run in parallel. Default is number of cores present
-            on the current machine.
+        data_lsit (list): List of data objects to be analyzed in parallel.
+        *args: Positional arguments required by function.
+        **kwargs: Keyword arguments required by function.
+            - cores: Can be included in **kwargs. Number of cores to run in parallel. 
+                    Default is number of cores present on the current machine.
             
     Returns:
-        results (list): List of results from each parallel process.
+        results (dict): Dictionary of results from each parallel process, named
+            according to position in data_list iterable.
+            
+        Example:
+            {'data_position_0': 675,
+            'data_position_1': 1800,
+            'data_position_2': 2925}
+
         
     """
     
@@ -94,14 +124,22 @@ def list_flow(function, data_list, *args, **kwargs):
             
     queue = Queue()
     
-    processes = [Process(target=__converter, args=(function, dataset, queue, args, kwargs)) for dataset in data_list]
+    #processes = [Process(target=__converter, args=(function, dataset, queue, args, kwargs)) for dataset in data_list]
+    
+    processes = []
+    
+    i = 0
+    for dataset in data_list:
+        new_process = Process(name="data_position_{}".format(i), target=__converter, args=(function, dataset, queue, args, kwargs))
+        processes.append(new_process)
+        i += 1
     
     for p in processes:
         p.start()
         
     for p in processes:
         p.join()
-        
-    results = [queue.get() for p in processes]
+    
+    results = {p.name: queue.get() for p in processes}
     
     return results

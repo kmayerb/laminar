@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def single_total(iterable):
+def single_total(iterable, odd=False):
     """This example function sums the data contained in a single iterable, i.e.
     a list, tuple, set, pd.Series, etc.
     
@@ -16,7 +16,11 @@ def single_total(iterable):
     total = 0
     
     for item in iterable:
-        total += int(item)
+        if odd:
+            if item % 2 != 0:
+                total += int(item)
+        else:
+            total += int(item)
     
     return total
 
