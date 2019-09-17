@@ -17,7 +17,17 @@ You can use laminar by placing laminar.py in your project directory, then puttin
 In order to practice/test laminar with built-in functions and data, place `import laminar_examples` at the top of your python file.
 
 ### Using laminar
-laminar currently consists of two functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`.
+laminar currently consists of two functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`. Both of these functions accept \*args and \*\*kwargs, which should be passed after `data`, so if `function` takes arg1 and arg2, like:  
+  
+`function(arg1, arg2)`  
+  
+you should call `laminar` like so:  
+  
+`laminar.iter_flow(function, data, arg1, arg2)`  
+or  
+`laminar.iter_flow(function, data, arg1=arg1, arg2=arg2)`  
+or in the case of \*args with \*\*kwargs  
+`laminar.iter_flow(function, data, arg1, arg2, kwarg=other_arg)`
 
 `laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame or a list. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back, where it is recombined to give one result. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a dict of size N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the values in the results dict should be summed to produce a total for the entire iterable.
 
