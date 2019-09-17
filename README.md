@@ -91,13 +91,13 @@ where
  which is a dict of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:  
-`result = sum(laminar.iter_flow(laminar_examples.laminar_df, laminar_examples.multi_tally))`  
+`result = sum(laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df).values())`  
 
 or
 
-`result = laminar.iter_flow(laminar_examples.laminar_df, laminar_examples.multi_tally)`
+`result = laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)`
 
-`result = sum(result)`
+`result = sum(result.values())`
 
 where
 
@@ -105,7 +105,13 @@ where
 
 
 #### Example 3: List of single iterables, single_total()
-`laminar.list_flow([laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns], laminar_examples.single_total)` returns `[675, 1800, 2925]`, which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
+`laminar.list_flow(laminar_examples.single_total, [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns])` returns  
+`{`  
+`'data_position_0': 675,`  
+`'data_position_1': 1800,`  
+`'data_position_2': 2925,`  
+`}`  
+which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 
 `columns_list = [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns]`
 
