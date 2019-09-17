@@ -45,14 +45,28 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 |...|...|...|
 
 #### Example 1: Single iterable, single_total()
-`laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])` returns `{'data[0-5]': 17,
- 'data[12-17]': 60,
- 'data[18-23]': 86,
- 'data[24-29]': 115,
- 'data[30-34]': 105,
- 'data[35-39]': 120,
- 'data[40-44]': 135,
- 'data[6-11]': 37}`, which is a dictionary describing the results for each section of your data. Each key/value pair in the returned dict corresponds to a segment of the iterable that was broken out and given to a process, with the key containing which portion of the data the result matches to. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
+`laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])` returns  
+`{`  
+
+`'data[0-5]': 17,`
+
+`'data[12-17]': 60,`
+
+`'data[18-23]': 86,`
+
+`'data[24-29]': 115,`
+
+`'data[30-34]': 105,`
+
+`'data[35-39]': 120,`
+
+`'data[40-44]': 135,`
+
+`'data[6-11]': 37`  
+
+`}` 
+
+which is a dictionary describing the results for each section of your data. Each key/value pair in the returned dict corresponds to a segment of the iterable that was broken out and given to a process, with the key containing which portion of the data the result matches to. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:
 `result = sum(laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1']).values())`
