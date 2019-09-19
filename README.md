@@ -58,11 +58,11 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 `laminar.iter_flow(laminar_examples.laminar_df['Col1'], laminar_examples.single_total)` returns `[17, 37, 60, 86, 115, 105, 120, 135]`, which is a list of sums. Each sum in the return value for a segment of the iterable that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:
-`result = sum(laminar.iter_flow(laminar_examples.laminar_df['Col1'], laminar_examples.single_total)`
+`result = sum(laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])`
 
 or
 
-`result = laminar.iter_flow(laminar_examples.laminar_df['Col1'], laminar_examples.single_total)`
+`result = laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])`
 
 `result = sum(result)`
 
@@ -72,14 +72,14 @@ where
 
 
 #### Example 2: Pandas DataFrame, multi_tally()
-`laminar.iter_flow(laminar_examples.laminar_df, laminar_examples.multi_tally)` returns `[3, 6, 6, 6, 6, 5, 5, 5]`, which is a list of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
+`laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)` returns `[3, 6, 6, 6, 6, 5, 5, 5]`, which is a list of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:  
-`result = sum(laminar.iter_flow(laminar_examples.laminar_df, laminar_examples.multi_tally))`  
+`result = sum(laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df))`  
 
 or
 
-`result = laminar.iter_flow(laminar_examples.laminar_df, laminar_examples.multi_tally)`
+`result = laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)`
 
 `result = sum(result)`
 
@@ -89,11 +89,11 @@ where
 
 
 #### Example 3: List of single iterables, single_total()
-`laminar.list_flow([laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns], laminar_examples.single_total)` returns `[675, 1800, 2925]`, which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
+`laminar.list_flow(laminar_examples.single_total, [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns])` returns `[675, 1800, 2925]`, which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 
 `columns_list = [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns]`
 
-`result = laminar.list_flow(columns_list, laminar_examples.single_total)`
+`result = laminar.list_flow(laminar_examples.single_total, columns_list)`
 
 where
 
@@ -101,11 +101,11 @@ where
 
 
 #### Example 4: List of Pandas DataFrames, multi_tally()
-`laminar.list_flow([laminar_examples.laminar_df]*3, laminar_examples.multi_tally)` returns `[42, 42, 42]`. The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
+`laminar.list_flow(laminar_examples.multi_tally, [laminar_examples.laminar_df]*3)` returns `[42, 42, 42]`. The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
 
 `data_frames_list = [laminar_examples.laminar_df]*3`
 
-`result = laminar.list_flow(data_frames_list, laminar_examples.multi_tally)`
+`result = laminar.list_flow(laminar_examples.multi_tally, data_frames_list)`
 
 where
 
