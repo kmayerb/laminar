@@ -128,10 +128,7 @@ which is a list of the totals for each column in `le.laminar_df`. With this usag
 
 `columns_list = [le.laminar_df[col] for col in le.laminar_df.columns]`
 
-
 `result = laminar.list_flow(le.single_total, columns_list)`
-
-`result = laminar.list_flow(laminar_examples.single_total, columns_list)`
 
 where
 
