@@ -77,7 +77,7 @@ The end result can look like one of these examples, although it doesn't have to:
 
 or
 
-`result = laminar.iter_flow(le.laminar_df['Col1'], le.single_total)`
+`result = laminar.iter_flow(le.single_total, lelaminar_df['Col1'])`
 
 `result = sum(result.values())`
 
@@ -124,10 +124,14 @@ where
 `'data_position_2': 2925,`  
 `}`  
 which is a list of the totals for each column in `le.laminar_df`. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
+`laminar.list_flow(laminar_examples.single_total, [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns])` returns `[675, 1800, 2925]`, which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 
 `columns_list = [le.laminar_df[col] for col in le.laminar_df.columns]`
 
+
 `result = laminar.list_flow(le.single_total, columns_list)`
+
+`result = laminar.list_flow(laminar_examples.single_total, columns_list)`
 
 where
 
