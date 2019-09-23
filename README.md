@@ -29,19 +29,21 @@ or
 or in the case of \*args with \*\*kwargs  
 `laminar.iter_flow(function, data, arg1, arg2, kwarg=other_arg)`
 
-`laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame or a list. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back, where it is recombined to give one result. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a list of length N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the results list should be summed to produce a total for the entire iterable.
+`laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame or a list. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back, where it is recombined to give one result. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a dict of size N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the values in the results dict should be summed to produce a total for the entire iterable.
 
 ### Examples
-To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`.
+To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`. To shorten the following code examples up, we'll import `laminar_examples` as an alias `le` and use this alias throughout the rest of this readme.  
+  
+`import laminar_examples as le`
 
 #### laminar_examples.single_total 
-`laminar_examples.single_total` is a simple function that accepts a single iterable and returns the sum total of the values in that iterable. `laminar_examples.single_total([1, 2, 1])` returns `4`.
+`le.single_total` is a simple function that accepts a single iterable and returns the sum total of the values in that iterable. `le.single_total([1, 2, 1])` returns `4`.
 
 #### laminar_examples.multi_tally 
-`laminar_examples.multi_tally` is a simple funtion that accepts a Pandas DataFrame and returns the number of rows that sum to greater than 25. `laminar_examples.multi_tally(pd.DataFrame({'Col1': [12, 12], 'Col2': [12, 14]})` returns `1` because the row at index 1 sums to `12 + 14 = 26`, which meets the function's criteria, but the row at index 0 sums to `12 + 12 = 24`, which does not.
+`le.multi_tally` is a simple funtion that accepts a Pandas DataFrame and returns the number of rows that sum to greater than 25. `le.multi_tally(pd.DataFrame({'Col1': [12, 12], 'Col2': [12, 14]})` returns `1` because the row at index 1 sums to `12 + 14 = 26`, which meets the function's criteria, but the row at index 0 sums to `12 + 12 = 24`, which does not.
 
 #### laminar_examples.laminar_df
-`laminar_examples.laminar_df` is a Pandas DataFrame that constitutes 3 columns ['Col1', 'Col2', 'Col3'], each of which contains different integer values.
+`le.laminar_df` is a Pandas DataFrame that constitutes 3 columns ['Col1', 'Col2', 'Col3'], each of which contains different integer values.
 
 | Col1 | Col2 | Col3 |
 |:----:|:----:|:----:|
@@ -55,16 +57,29 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 |...|...|...|
 
 #### Example 1: Single iterable, single_total()
-`laminar.iter_flow(laminar_examples.laminar_df['Col1'], laminar_examples.single_total)` returns `[17, 37, 60, 86, 115, 105, 120, 135]`, which is a list of sums. Each sum in the return value for a segment of the iterable that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
+`laminar.iter_flow(le.single_total, le.laminar_df['Col1'])` returns  
+  
+`{`  
+`'data[0-5]': 17,`  
+`'data[12-17]': 60,`  
+`'data[18-23]': 86,`  
+`'data[24-29]': 115,`  
+`'data[30-34]': 105,`  
+`'data[35-39]': 120,`  
+`'data[40-44]': 135,`  
+`'data[6-11]': 37,`  
+`}` 
+
+which is a dictionary describing the results for each section of your data. Each key/value pair in the returned dict corresponds to a segment of the iterable that was broken out and given to a process, with the key containing which portion of the data the result matches to. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:
-`result = sum(laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])`
+`result = sum(laminar.iter_flow(le.single_total, le.laminar_df['Col1']).values())`
 
 or
 
-`result = laminar.iter_flow(laminar_examples.single_total, laminar_examples.laminar_df['Col1'])`
+`result = laminar.iter_flow(le.single_total, lelaminar_df['Col1'])`
 
-`result = sum(result)`
+`result = sum(result.values())`
 
 where
 
@@ -72,16 +87,29 @@ where
 
 
 #### Example 2: Pandas DataFrame, multi_tally()
-`laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)` returns `[3, 6, 6, 6, 6, 5, 5, 5]`, which is a list of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
+`laminar.iter_flow(le.multi_tally, le.laminar_df)` returns  
+
+`{`  
+`'data[0-5]': 3,`  
+`'data[12-17]': 6,`  
+`'data[18-23]': 6,`   
+`'data[24-29]': 6,`   
+`'data[30-34]': 5,`   
+`'data[35-39]': 5,`   
+`'data[40-44]': 5,`   
+`'data[6-11]': 6,`  
+`}`
+ 
+ which is a dict of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:  
-`result = sum(laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df))`  
+`result = sum(laminar.iter_flow(le.multi_tally, le.laminar_df).values())`  
 
 or
 
-`result = laminar.iter_flow(laminar_examples.multi_tally, laminar_examples.laminar_df)`
+`result = laminar.iter_flow(le.multi_tally, le.laminar_df)`
 
-`result = sum(result)`
+`result = sum(result.values())`
 
 where
 
@@ -89,27 +117,40 @@ where
 
 
 #### Example 3: List of single iterables, single_total()
+`laminar.list_flow(le.single_total, [le.laminar_df[col] for col in le.laminar_df.columns])` returns  
+`{`  
+`'data_position_0': 675,`  
+`'data_position_1': 1800,`  
+`'data_position_2': 2925,`  
+`}`  
+which is a list of the totals for each column in `le.laminar_df`. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 `laminar.list_flow(laminar_examples.single_total, [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns])` returns `[675, 1800, 2925]`, which is a list of the totals for each column. With this usage, a user can pass a list of iterables to `list_flow`; each iterable will be passed to its own process. This is useful for when a user intends to use the same function on multiple iterables, which can be columns in the same DataFrame, or independent lists.
 
-`columns_list = [laminar_examples.laminar_df[col] for col in laminar_examples.laminar_df.columns]`
+`columns_list = [le.laminar_df[col] for col in le.laminar_df.columns]`
 
-`result = laminar.list_flow(laminar_examples.single_total, columns_list)`
+`result = laminar.list_flow(le.single_total, columns_list)`
 
 where
 
-`result = [675, 1800, 2925]`
+`result = {'data_position_0': 675, 'data_position_1': 1800, 'data_position_2': 2925}`
 
 
 #### Example 4: List of Pandas DataFrames, multi_tally()
-`laminar.list_flow(laminar_examples.multi_tally, [laminar_examples.laminar_df]*3)` returns `[42, 42, 42]`. The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
+`laminar.list_flow(le.multi_tally, [le.laminar_df]*3)` returns  
+`{`  
+`'data_position_0': 42,`  
+`'data_position_1': 42,`  
+`'data_position_2': 42,`  
+`}`.  
+The result values are the same because we passed a list of 3 identical DataFrames; feel free to test this with different DataFrames of your own making.
 
-`data_frames_list = [laminar_examples.laminar_df]*3`
+`data_frames_list = [le.laminar_df]*3`
 
-`result = laminar.list_flow(laminar_examples.multi_tally, data_frames_list)`
+`result = laminar.list_flow(le.multi_tally, data_frames_list)`
 
 where
 
-`result = [42, 42, 42]`
+`result = {'data_position_0': 42, 'data_position_1': 42, 'data_position_2': 42}`
 
 ### Final Notes
 Which laminar tool a user will use depends on the structure of their data and the function that will be applied to that data. `laminar.list_flow` is not confined to operating on Pandas DataFrames; any list of data objects can be passed to list_flow.
