@@ -3,9 +3,9 @@ Laminar seeks to take most of the effort out of parallel processing in Python by
 
 ## Usage
 ### Installing
-Laminar is delivered as a package downloadable from the SciscoGenetics GitHub organization. To install, activate your preferred environment, then use:  
+Laminar is delivered as a package. To install, activate your preferred environment, then use:  
 
-`pip install git+https://github.com/sciscogenetics/laminar`.  
+`pip install git+https://github.com/dgellerup/laminar`.  
 
 Laminar's `laminar` module only requires one third-party library, which is `numpy`. laminar_examples, a module with some practice functions and data objects, also requires `pandas`. Both libraries will be automatically included in the laminar installation.
 
