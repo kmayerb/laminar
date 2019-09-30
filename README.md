@@ -2,44 +2,40 @@
 Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functions.
 
 ## Usage
-### Requirements
-laminar requires the numpy package to be installed in your working environment. laminar's companion module, laminar_examples.py, requires pandas.
-While in your desired environment, simply enter: 
+### Installing
+Laminar is delivered as a package. To install, activate your preferred environment, then use:  
 
-`pip install pandas`  
--or-  
-`conda install pandas`  
+`pip install git+https://github.com/dgellerup/laminar`.  
 
-in order to install both numpy and pandas into your environment. (numpy is a dependency of pandas and both will be downloaded together when you install pandas).
+Laminar's `laminar` module only requires one third-party library, which is `numpy`. laminar_examples, a module with some practice functions and data objects, also requires `pandas`. Both libraries will be automatically included in the laminar installation.
 
 ### Importing
-You can use laminar by placing laminar.py in your project directory, then putting `import laminar` at the top of any file that you wish to use it in.  
-In order to practice/test laminar with built-in functions and data, place `import laminar_examples` at the top of your python file.
+You can use laminar by placing `from laminar import laminar` at the top of your python file. In order to practice/test laminar with built-in functions and data, place `from laminar_examples import laminar_examples` at the top of your python file.
 
 ### Using laminar
 laminar currently consists of two functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`. Both of these functions accept \*args and \*\*kwargs, which should be passed after `data`, so if `function` takes arg1 and arg2, like:  
-  
+
 `function(arg1, arg2)`  
-  
+
 you should call `laminar` like so:  
-  
+
 `laminar.iter_flow(function, data, arg1, arg2)`  
 or  
 `laminar.iter_flow(function, data, arg1=arg1, arg2=arg2)`  
 or in the case of \*args with \*\*kwargs  
 `laminar.iter_flow(function, data, arg1, arg2, kwarg=other_arg)`
 
-`laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame or a list. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back, where it is recombined to give one result. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a dict of size N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the values in the results dict should be summed to produce a total for the entire iterable.
+`laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame, a python list, etc. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back as a descriptive dictionary of results. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a dict of size N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the values in the results dict should be summed to produce a total for the entire iterable.
 
 ### Examples
 To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`. To shorten the following code examples up, we'll import `laminar_examples` as an alias `le` and use this alias throughout the rest of this readme.  
-  
-`import laminar_examples as le`
 
-#### laminar_examples.single_total 
+`from laminar_examples import laminar_examples as le`
+
+#### laminar_examples.single_total
 `le.single_total` is a simple function that accepts a single iterable and returns the sum total of the values in that iterable. `le.single_total([1, 2, 1])` returns `4`.
 
-#### laminar_examples.multi_tally 
+#### laminar_examples.multi_tally
 `le.multi_tally` is a simple funtion that accepts a Pandas DataFrame and returns the number of rows that sum to greater than 25. `le.multi_tally(pd.DataFrame({'Col1': [12, 12], 'Col2': [12, 14]})` returns `1` because the row at index 1 sums to `12 + 14 = 26`, which meets the function's criteria, but the row at index 0 sums to `12 + 12 = 24`, which does not.
 
 #### laminar_examples.laminar_df
@@ -58,7 +54,7 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 
 #### Example 1: Single iterable, single_total()
 `laminar.iter_flow(le.single_total, le.laminar_df['Col1'])` returns  
-  
+
 `{`  
 `'data[0-5]': 17,`  
 `'data[12-17]': 60,`  
@@ -68,7 +64,7 @@ To illustrate how one would use laminar in their workflow, we'll use some premad
 `'data[35-39]': 120,`  
 `'data[40-44]': 135,`  
 `'data[6-11]': 37,`  
-`}` 
+`}`
 
 which is a dictionary describing the results for each section of your data. Each key/value pair in the returned dict corresponds to a segment of the iterable that was broken out and given to a process, with the key containing which portion of the data the result matches to. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are summing values, we can use `sum()`.
 
@@ -77,7 +73,7 @@ The end result can look like one of these examples, although it doesn't have to:
 
 or
 
-`result = laminar.iter_flow(le.single_total, lelaminar_df['Col1'])`
+`result = laminar.iter_flow(le.single_total, le.laminar_df['Col1'])`
 
 `result = sum(result.values())`
 
@@ -99,7 +95,7 @@ where
 `'data[40-44]': 5,`   
 `'data[6-11]': 6,`  
 `}`
- 
+
  which is a dict of counts. Each count is the return value for a segment of the data that was broken out and given to a process. To complete your analysis, you can use whichever function coincides with the intended behavior of your analysis. In this case, since we are counting values, it makes sense to use `sum()`.
 
 The end result can look like one of these examples, although it doesn't have to:  
@@ -153,6 +149,6 @@ where
 `result = {'data_position_0': 42, 'data_position_1': 42, 'data_position_2': 42}`
 
 ### Final Notes
-Which laminar tool a user will use depends on the structure of their data and the function that will be applied to that data. `laminar.list_flow` is not confined to operating on Pandas DataFrames; any list of data objects can be passed to list_flow.
+Which laminar tool a user will use depends on the structure of their data and the function that will be applied to that data. `laminar.list_flow` is not confined to operating on Pandas DataFrames; any list of iterable data objects can be passed to list_flow.
 
 A basic rule of thumb is to use `laminar.iter_flow` for a single data object that one wishes to break into pieces in order to process it faster. `laminar.list_flow` is to be used in a situation where the user has multiple data objects that he or she wishes to be analyzed by the same function in parallel.
