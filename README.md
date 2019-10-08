@@ -10,7 +10,7 @@ Laminar is delivered as a package. To install, activate your preferred environme
 Laminar's `laminar` module only requires one third-party library, which is `numpy`. laminar_examples, a module with some practice functions and data objects, also requires `pandas`. Both libraries will be automatically included in the laminar installation.
 
 ### Importing
-You can use laminar by placing `from laminar import laminar` at the top of your python file. In order to practice/test laminar with built-in functions and data, place `from laminar_examples import laminar_examples` at the top of your python file.
+You can use laminar by placing `from laminar import laminar` at the top of your python file. In order to practice/test laminar with built-in functions and data, place `from laminar import laminar_examples` at the top of your python file.
 
 ### Using laminar
 laminar currently consists of two functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`. Both of these functions accept \*args and \*\*kwargs, which should be passed after `data`, so if `function` takes arg1 and arg2, like:  
@@ -30,7 +30,7 @@ or in the case of \*args with \*\*kwargs
 ### Examples
 To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`. To shorten the following code examples up, we'll import `laminar_examples` as an alias `le` and use this alias throughout the rest of this readme.  
 
-`from laminar_examples import laminar_examples as le`
+`from laminar import laminar_examples as le`
 
 #### laminar_examples.single_total
 `le.single_total` is a simple function that accepts a single iterable and returns the sum total of the values in that iterable. `le.single_total([1, 2, 1])` returns `4`.
