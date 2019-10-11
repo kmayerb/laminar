@@ -1,4 +1,6 @@
-# laminar
+# laminar  
+results = laminar.iter_flow(my_function, my_iterable)
+
 Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functions.
 
 ## Usage
@@ -147,6 +149,36 @@ The result values are the same because we passed a list of 3 identical DataFrame
 where
 
 `result = {'data_position_0': 42, 'data_position_1': 42, 'data_position_2': 42}`
+
+
+## Benchmarks
+To date, laminar has been tested against traditional iterative analysis on the following functions:  
+
+String search function: count_snps()  
+
+### Parameters
+
+**Files:**  
+
+sample-1_S1_R1_001.fastq.gz  
+sample-1_S1_R2_001.fastq.gz  
+
+**Total size of files:**  
+
+26M  
+
+**Length of Pandas DataFrame (going forward referred to as pd.DataFrame) object representation of combined files:**  
+
+224706 rows
+
+**Results:**  
+
+Traditional count_snps(pd.DataFrame): 42.6 seconds  
+
+Parallelized laminar.iter_flow(count_snps, pd.DataFrame): 17.49 seconds  
+
+Percent speedup: 58.96% faster
+
 
 ### Final Notes
 Which laminar tool a user will use depends on the structure of their data and the function that will be applied to that data. `laminar.list_flow` is not confined to operating on Pandas DataFrames; any list of iterable data objects can be passed to list_flow.
