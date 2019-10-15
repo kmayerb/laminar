@@ -3,7 +3,7 @@ from multiprocessing import Queue, Process, cpu_count
 import numpy as np
 
 
-def __converter(function, data_shard, queue, *args):
+def __converter(name, function, data_shard, queue, *args):
     """Module function that calls the passed function with the passed data_shard
     as an argument, then places the result in the queue. Also passes through any
     args required for the function (if passed in).
@@ -23,8 +23,8 @@ def __converter(function, data_shard, queue, *args):
     
     result = function(data_shard, *args, **kwargs)
     
-    queue.put(result)
-
+    queue.put((name, result))
+    
 
 def iter_flow(function, data, *args, **kwargs):
     """Parallelizes analysis of a list.
@@ -46,14 +46,14 @@ def iter_flow(function, data, *args, **kwargs):
             according to position in data iterable.
             
         Example: 
-            {'data_position_0': 17,
-             'data_position_1': 37,
-             'data_position_2': 60,
-             'data_position_3': 86,
-             'data_position_4': 115,
-             'data_position_5': 105,
-             'data_position_6': 120,
-             'data_position_7': 135}
+            {'data[0-25]': 17,
+             'data[26-50]': 37,
+             'data[51-75]': 60,
+             'data[76-100]': 86,
+             'data[101-125]: 115,
+             'data[126-150]': 105,
+             'data[151-175]': 120,
+             'data[176-200]': 135}
             
     """
         
@@ -78,7 +78,8 @@ def iter_flow(function, data, *args, **kwargs):
     for dataset in data_split:
         start = end + 1
         end += len(dataset)
-        new_process = Process(name="data[{}-{}]".format(start, end), target=__converter, args=(function, dataset, queue, args, kwargs))
+        name = f"data[{start}-{end}]"
+        new_process = Process(target=__converter, args=(name, function, dataset, queue, args, kwargs))
         processes.append(new_process)
     
     for p in processes:
@@ -86,8 +87,11 @@ def iter_flow(function, data, *args, **kwargs):
         
     for p in processes:
         p.join()
-        
-    results = {p.name: queue.get() for p in processes}
+    
+    results = {}
+    for p in processes:
+        q = queue.get()
+        results[q[0]] = q[1]
     
     return results
 
@@ -125,13 +129,12 @@ def list_flow(function, data_list, *args, **kwargs):
             
     queue = Queue()
     
-    #processes = [Process(target=__converter, args=(function, dataset, queue, args, kwargs)) for dataset in data_list]
-    
     processes = []
     
     i = 0
     for dataset in data_list:
-        new_process = Process(name="data_position_{}".format(i), target=__converter, args=(function, dataset, queue, args, kwargs))
+        name = f"data_position_{i}"
+        new_process = Process(target=__converter, args=(name, function, dataset, queue, args, kwargs))
         processes.append(new_process)
         i += 1
     
@@ -141,6 +144,9 @@ def list_flow(function, data_list, *args, **kwargs):
     for p in processes:
         p.join()
     
-    results = {p.name: queue.get() for p in processes}
+    results = {}
+    for p in processes:
+        q = queue.get()
+        results[q[0]] = q[1]
     
     return results
