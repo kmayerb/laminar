@@ -13,7 +13,8 @@ opts = dict(name='laminar',
             version='1.0.1',
             packages=PACKAGES,
             install_requires=["pandas>=0.24.0",
-                                "numpy>=1.12.1"]
+                                "numpy>=1.12.1",
+                                "pytest-cov>=2.8.1"]
            )
 
 setup(**opts)
