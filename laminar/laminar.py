@@ -24,6 +24,10 @@ class Laminar:
             new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
             self.processes[name] = new_process
         
+    def show_processes(self):
+        for key in self.processes.keys():
+            print(key)
+        
     def drop_process(self, name: str):
         del self.processes[name]
         
@@ -42,8 +46,11 @@ class Laminar:
         
         return "Processes finished."
     
-    def reset_processes(self):
+    def clear_processes(self):
         self.processes = OrderedDict()
+        
+    def get_results(self):
+        return self.results
     
     def __converter(self, name: str, function: Callable, data_shard: Collection, *args):
         """Module function that calls the passed function with the passed data_shard
