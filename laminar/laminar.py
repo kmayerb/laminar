@@ -1,9 +1,74 @@
+from collections import OrderedDict
 from multiprocessing import Queue, Process, cpu_count
+from typing import Collection, Callable
 
 import numpy as np
 
 
-def __converter(name, function, data_shard, queue, *args):
+class Laminar:
+    
+    def __init__(self, cores=cpu_count()):
+        self.cores = cores
+        self.processes = OrderedDict()
+        self.queue = Queue()
+        self.results = {}
+        
+    def add_process(self, name: str, function: Callable, dataset: Collection, *args, **kwargs):
+        if len(self.processes) < self.cores:
+            new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
+            self.processes[name] = new_process
+        else:
+            print("Warning: Process pool was full.")
+            print(f"{list(self.processes.keys())[0]} has been removed to make room for {name}.")
+            self.processes.popitem(last=False)
+            new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
+            self.processes[name] = new_process
+        
+    def drop_process(self, name: str):
+        del self.processes[name]
+        
+    def launch_processes(self):
+        for p in self.processes.values():
+            p.start()
+        
+        for p in self.processes.values():
+            p.join()
+        
+        for p in self.processes.values():
+            q = self.queue.get()
+            self.results[q[0]] = q[1]
+            
+        self.processes = OrderedDict()
+        
+        return "Processes finished."
+    
+    def reset_processes(self):
+        self.processes = OrderedDict()
+    
+    def __converter(self, name: str, function: Callable, data_shard: Collection, *args):
+        """Module function that calls the passed function with the passed data_shard
+        as an argument, then places the result in the queue. Also passes through any
+        args required for the function (if passed in).
+        
+        Args:
+            function: Function object the user wishes to parallelize.
+            data_shard: Data object that is a subset of the master data object passed
+                to the laminar function.
+            queue: Multiprocessing queue that holds process results.
+                
+        Returns:
+            None
+            
+        """
+        
+        kwargs, args = args[-1], args[0]
+        
+        result = function(data_shard, *args, **kwargs)
+        
+        self.queue.put((name, result))
+            
+        
+def __converter(name: str, function: Callable, data_shard: Collection, queue: Queue, *args):
     """Module function that calls the passed function with the passed data_shard
     as an argument, then places the result in the queue. Also passes through any
     args required for the function (if passed in).
@@ -26,7 +91,7 @@ def __converter(name, function, data_shard, queue, *args):
     queue.put((name, result))
     
 
-def iter_flow(function, data, *args, **kwargs):
+def iter_flow(function: Callable, data: Collection, *args, **kwargs):
     """Parallelizes analysis of a list.
     
     Parallelization function that breaks up an iterable into data shards,
@@ -35,7 +100,7 @@ def iter_flow(function, data, *args, **kwargs):
     
     Args:
         function: Function with which to analyze data.
-        data (iterable): The iterable to be analyzed in parallel.
+        data: The iterable to be analyzed in parallel.
         *args: Positional arguments required by function.
         **kwargs: Keyword arguments required by function.
             - cores: Can be included in **kwargs. Number of cores to run in parallel. 
@@ -96,7 +161,7 @@ def iter_flow(function, data, *args, **kwargs):
     return results
 
 
-def list_flow(function, data_list, *args, **kwargs):
+def list_flow(function: Callable, data_list: Collection, *args, **kwargs):
     """Parallelizes analysis of a list.
     
     Parallelization function that sends each data object in a list to its own 
