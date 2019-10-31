@@ -72,7 +72,7 @@ class Laminar:
         try:
             result = function(data_shard, *args, **kwargs)
         except Exception as e:
-            print(f"Exception occurred for process {name}")
+            print(f"Exception occurred for process {name}.")
             result = e
         
         self.queue.put((name, result))
@@ -95,8 +95,11 @@ def __converter(name: str, function: Callable, data_shard: Collection, queue: Qu
     """
     
     kwargs, args = args[-1], args[0]
-    
-    result = function(data_shard, *args, **kwargs)
+    try:
+        result = function(data_shard, *args, **kwargs)
+    except Exception as e:
+        print(f"Exception occurred for process {name}.")
+        result = e
     
     queue.put((name, result))
     
