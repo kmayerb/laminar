@@ -1,10 +1,21 @@
-# laminar  
+![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7|%203.8-blue)
+
+# laminar
+_Module Functions_
 results = laminar.iter_flow(my_function, my_iterable)
+results = laminar.list_flow(my_function, my_list_of_data)
+
+_Class Usage_
+my_lam = laminar.Laminar()
+my_lam.add_process("process_1", function_1, my_data)
+my_lam.add_process("process_2", function_2, my_other_data)
+my_lam.launch_processes()
+results = my_lam.get_results()
 
 Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functions.
 
 ## Usage
-### Installing
+### Installation
 Laminar is delivered as a package. To install, activate your preferred environment, then use:  
 
 `pip install git+https://github.com/dgellerup/laminar`.  
@@ -12,10 +23,30 @@ Laminar is delivered as a package. To install, activate your preferred environme
 Laminar's `laminar` module only requires one third-party library, which is `numpy`. laminar_examples, a module with some practice functions and data objects, also requires `pandas`. Both libraries will be automatically included in the laminar installation.
 
 ### Importing
-You can use laminar by placing `from laminar import laminar` at the top of your python file. In order to practice/test laminar with built-in functions and data, place `from laminar import laminar_examples` at the top of your python file.
+You can use laminar by placing `from laminar import laminar` or `import laminar.laminar as <some_alias>` at the top of your python file. In order to practice/test laminar with built-in functions and data, place `from laminar import laminar_examples` or `import laminar.laminar_examples as <some_alias>` at the top of your python file.  
+
+If only using the class `Laminar` you can import it directly with `from laminar.laminar import Laminar`.
 
 ### Using laminar
-laminar currently consists of two functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`. Both of these functions accept \*args and \*\*kwargs, which should be passed after `data`, so if `function` takes arg1 and arg2, like:  
+laminar currently consists of a class `Laminar` as well as two module functions that are designed to work with different data configurations, `laminar.iter_flow` and `laminar.list_flow`.
+
+The Laminar class provides an instance that manages distinct processes and stores results. Class methods are available that allow the user to view, drop, clear, and launch processes.  
+
+To use the Laminar class, create a Laminar instance:  
+
+my_lam = Laminar()  
+
+Laminar class declarations have one optional argument for number of cores, which defaults to the number of cores on the current machine. Thus, if the user only wants to utilize two cores, the declaration would be:  
+
+my_lam = Laminar(2)  
+
+To add a process to the object's process batch, simply use the add_process() class method, which is very similar to the module function calls listed below, except add_process() also requires the user to pass a string as the name of the process. This name can be any string.  
+
+my_lam.add_process('process_1', function_1, my_data)  
+
+If more processes are added than the number of cores available, the process batch acts like a first in/first out queue. The most recent process will be added and the first process added to the batch will be removed.
+
+Both of the module functions accept \*args and \*\*kwargs, which should be passed after `data`, so if `function` takes arg1 and arg2, like:
 
 `function(arg1, arg2)`  
 
