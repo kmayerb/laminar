@@ -1,4 +1,4 @@
-![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7|%203.8-blue)
+![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue)
 
 # laminar
 _Module Functions_
@@ -34,15 +34,15 @@ The Laminar class provides an instance that manages distinct processes and store
 
 To use the Laminar class, create a Laminar instance:  
 
-my_lam = Laminar()  
+`my_lam = Laminar()`  
 
 Laminar class declarations have one optional argument for number of cores, which defaults to the number of cores on the current machine. Thus, if the user only wants to utilize two cores, the declaration would be:  
 
-my_lam = Laminar(2)  
+`my_lam = Laminar(2)`  
 
 To add a process to the object's process batch, simply use the add_process() class method, which is very similar to the module function calls listed below, except add_process() also requires the user to pass a string as the name of the process. This name can be any string.  
 
-my_lam.add_process('process_1', function_1, my_data)  
+`my_lam.add_process('process_1', function_1, my_data)`  
 
 If more processes are added than the number of cores available, the process batch acts like a first in/first out queue. The most recent process will be added and the first process added to the batch will be removed.
 
@@ -60,7 +60,17 @@ or in the case of \*args with \*\*kwargs
 
 `laminar.iter_flow` is designed to work with a single iterable, such as a pandas DataFrame, a python list, etc. When you pass an iterable to `laminar.iter_flow`, it will automatically break your data up into chunks based on how many cores your machine has. It then queues up each chunk to be given to a core, which performs the work, then passes the data back as a descriptive dictionary of results. For example, a list of 1,000,000 integers is broken into chunks of length 250,000 on a machine with four cores. Each chunk is summed (as an example) by a core, and the results from each core are returned in a dict of size N = # cores. You are then able to combine the results in whatever way fits the computation that you need. For example, if the function passed to `laminar.iter_flow` computes the sum, then the values in the results dict should be summed to produce a total for the entire iterable.
 
-### Examples
+### Laminar Class Definition  
+| Method | Argument(s) | Returns | Description |
+| --- | --- | --- |
+| `add_process()` | `name: str`, `function: Callable`, `dataset: Collection`, `*args`, `**kwargs`) | `None` | Add a named process to an instance's process pool. Process must include a name, function, and some data (in reality, this can be anything). |  
+| `show_processes()` | `None` | `None` | Displays processes currently in instance process pool. |  
+| `drop_process()` | `name: str` | `None` | Removes process with name of `name` from instance process pool. |  
+| `clear_processes()` | `None` | `None` | Removes all processes from instance process pool. |  
+| `launch_processes()` | `None` | `str: "Processes finished."` | Run all instance processes in parallel. |  
+| `get_results()` | `None` | `self.results: dict` | Returns the instance results dictionary. |  
+
+### Module Function Examples
 To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`. To shorten the following code examples up, we'll import `laminar_examples` as an alias `le` and use this alias throughout the rest of this readme.  
 
 `from laminar import laminar_examples as le`
