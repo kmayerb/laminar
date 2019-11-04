@@ -17,6 +17,16 @@ def test_converter():
     assert q[0] == "test12"
     assert q[1] == 20
 
+    def add_to_list(ls):
+        return ls.append('caboose')
+
+    laminar.__converter("testfail", add_to_list, 7, queue, [], {})
+
+    q = queue.get()
+
+    assert q[0] == "testfail"
+    assert str(q[1]) == "'int' object has no attribute 'append'"
+
 
 def test_iter_flow():
     result = laminar.iter_flow(le.single_total, le.laminar_df['Col1'])
@@ -74,3 +84,76 @@ def test_list_flow():
                         'data_position_1': 15,
                         'data_position_2': 24
                         }
+
+
+def test_init_my_lam(my_lam):
+    assert my_lam.cores == 2
+    assert my_lam.results == {}
+
+
+def test_my_lam(my_lam):
+
+    def square(ls):
+        result = [x*x for x in ls]
+        return result
+
+    def cube(ls):
+        result = [x*x*x for x in ls]
+        return result
+
+    my_lam.add_process('square1', square, [0, 1, 2, 3])
+
+    assert len(my_lam._processes) == 1
+
+    my_lam.add_process('cube1', cube, [0, 1, 2, 3])
+
+    assert len(my_lam._processes) == 2
+
+    my_lam.drop_process('cube1')
+
+    assert len(my_lam._processes) == 1
+
+    my_lam.add_process('cube2', cube, [1, 1, 2, 2])
+
+    def sum_func(sum_list):
+        return sum(sum_list)
+
+    my_lam._Laminar__converter("test12", sum_func, [2, 4, 6, 8], [], {})
+
+    q = my_lam._queue.get()
+
+    assert q[0] == "test12"
+    assert q[1] == 20
+
+    my_lam.add_process('cube3', cube, [1, 2, 1, 2])
+
+    assert my_lam._processes.get('cube3') != None
+
+    proc = my_lam.show_processes()
+
+    assert proc == "cube2\ncube3\n"
+
+    my_lam.launch_processes()
+
+    result = my_lam.get_results()
+
+    assert result == {'cube2': [1, 1, 8, 8], 'cube3': [1, 8, 1, 8]}
+    assert len(my_lam._processes) == 0
+
+    my_lam.add_process('square2', square, [0, 1, 2, 3])
+    my_lam.add_process('cube3', cube, [1, 1, 2, 2])
+
+    assert len(my_lam._processes) == 2
+
+    my_lam.clear_processes()
+
+    assert len(my_lam._processes) == 0
+
+    def add_to_list(ls):
+        return ls.append('caboose')
+
+    my_lam.add_process('fail', add_to_list, 7)
+    my_lam.launch_processes()
+
+    result = my_lam.get_results()
+    assert str(result.get('fail')) == "'int' object has no attribute 'append'"
