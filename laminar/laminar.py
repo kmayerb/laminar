@@ -13,7 +13,7 @@ class Laminar:
         self._queue = Queue()
         self.results = {}
         
-    def add_process(self, name: str, function: Callable, dataset: Collection, *args, **kwargs):
+    def add_process(self, name: str, function: Callable, dataset: Collection, *args, **kwargs) -> None:
         if len(self._processes) < self.cores:
             new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
             self._processes[name] = new_process
@@ -24,14 +24,17 @@ class Laminar:
             new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
             self._processes[name] = new_process
         
-    def show_processes(self):
+    def show_processes(self) -> str:
+        proc_string = ""
         for key in self._processes.keys():
-            print(key)
+            proc_string = f"{proc_string + key}\n"
+        print(proc_string)
+        return proc_string
         
-    def drop_process(self, name: str):
+    def drop_process(self, name: str) -> None:
         del self._processes[name]
         
-    def launch_processes(self):
+    def launch_processes(self) -> str:
         for p in self._processes.values():
             p.start()
         
@@ -46,13 +49,13 @@ class Laminar:
         
         return "Processes finished."
     
-    def clear_processes(self):
+    def clear_processes(self) -> None:
         self._processes = OrderedDict()
         
-    def get_results(self):
+    def get_results(self) -> dict:
         return self.results
     
-    def __converter(self, name: str, function: Callable, data_shard: Collection, *args):
+    def __converter(self, name: str, function: Callable, data_shard: Collection, *args) -> None:
         """Module function that calls the passed function with the passed data_shard
         as an argument, then places the result in the queue. Also passes through any
         args required for the function (if passed in).
@@ -78,7 +81,7 @@ class Laminar:
         self._queue.put((name, result))
             
         
-def __converter(name: str, function: Callable, data_shard: Collection, queue: Queue, *args):
+def __converter(name: str, function: Callable, data_shard: Collection, queue: Queue, *args) -> None:
     """Module function that calls the passed function with the passed data_shard
     as an argument, then places the result in the queue. Also passes through any
     args required for the function (if passed in).
@@ -104,7 +107,7 @@ def __converter(name: str, function: Callable, data_shard: Collection, queue: Qu
     queue.put((name, result))
     
 
-def iter_flow(function: Callable, data: Collection, *args, **kwargs):
+def iter_flow(function: Callable, data: Collection, *args, **kwargs) -> dict:
     """Parallelizes analysis of a list.
     
     Parallelization function that breaks up an iterable into data shards,
@@ -135,7 +138,7 @@ def iter_flow(function: Callable, data: Collection, *args, **kwargs):
             
     """
         
-    cores = kwargs.pop('cores', cpu_count())
+    cores = kwargs.pop("cores", cpu_count())
     
     if cores > cpu_count():
         cores = cpu_count()
@@ -174,7 +177,7 @@ def iter_flow(function: Callable, data: Collection, *args, **kwargs):
     return results
 
 
-def list_flow(function: Callable, data_list: Collection, *args, **kwargs):
+def list_flow(function: Callable, data_list: Collection, *args, **kwargs) -> dict:
     """Parallelizes analysis of a list.
     
     Parallelization function that sends each data object in a list to its own 
@@ -200,7 +203,7 @@ def list_flow(function: Callable, data_list: Collection, *args, **kwargs):
         
     """
     
-    cores = kwargs.pop('cores', cpu_count())
+    cores = kwargs.pop("cores", cpu_count())
     
     if cores > cpu_count():
         cores = cpu_count()
