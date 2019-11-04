@@ -63,6 +63,14 @@ def test_iter_flow():
                         'data[1-1]': 2
                         }
 
+    result = laminar.iter_flow(le.single_total, short_list, True, cores=1)
+
+    assert result.get('data[0-2]') == 4
+
+    result = laminar.iter_flow(le.multi_tally, le.laminar_df)
+
+    assert result.get('data[0-5]') == 3
+
 def test_list_flow():
     result = laminar.list_flow(le.single_total, [le.laminar_df[col] for col in le.laminar_df.columns])
 
@@ -148,6 +156,11 @@ def test_my_lam(my_lam):
     my_lam.clear_processes()
 
     assert len(my_lam._processes) == 0
+
+    my_lam.add_process('square2', square, [0, 1, 2, 3])
+    my_lam.launch_processes()
+
+    assert my_lam.get_results().get('square2') == [0, 1, 4, 9]
 
     def add_to_list(ls):
         return ls.append('caboose')
