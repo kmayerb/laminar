@@ -1,5 +1,4 @@
 certifi==2019.9.11
-laminar==1.1.0
 numpy==1.17.3
 pandas==0.25.3
 python-dateutil==2.8.1
