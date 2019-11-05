@@ -3,15 +3,15 @@
 ![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue)
 
 # laminar
-_Module Functions_
-results = laminar.iter_flow(my_function, my_iterable)
+__Module Functions__  
+results = laminar.iter_flow(my_function, my_iterable)  
 results = laminar.list_flow(my_function, my_list_of_data)
 
-_Class Usage_
-my_lam = laminar.Laminar()
-my_lam.add_process("process_1", function_1, my_data)
-my_lam.add_process("process_2", function_2, my_other_data)
-my_lam.launch_processes()
+__Class Usage__  
+my_lam = laminar.Laminar()  
+my_lam.add_process("process_1", function_1, my_data)  
+my_lam.add_process("process_2", function_2, my_other_data)  
+my_lam.launch_processes()  
 results = my_lam.get_results()
 
 Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functions.
