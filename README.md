@@ -3,7 +3,7 @@
 ![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue)
 
 # laminar  
-__Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functions.__  
+__Laminar seeks to take most of the effort out of parallel processing in Python by providing user-friendly parallelization functionality.__  
 
 __Module Functions__  
 results = laminar.iter_flow(my_function, my_iterable)  
