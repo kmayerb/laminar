@@ -64,8 +64,8 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-results
-            pytest -v --cov --log-file=./test_log.txt
-            
+            pytest -v --cov ./test --log-file=./test_log.txt
+
       - store_test_results:
           path: test-results
 
