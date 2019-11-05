@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.0
 jobs:
   build:
     docker:
@@ -15,7 +15,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/postgres:9.4
 
-    working_directory: ~/repo
+    working_directory: ~/laminar
 
     steps:
       - checkout
@@ -30,7 +30,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
+            pip install virtualenv
+            python3 -m virtualenv venv
             . venv/bin/activate
             pip install -r requirements.txt
 
@@ -38,18 +39,51 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - persist_to_workspace:
+          root: ~/laminar
+          paths:
+            - .
+  test:
+    docker:
+      -image: circleci/python:3.7
+    working_directory: /tmp/src/laminar
+    steps:
+    - attach_workspace:
+      at: /tmp/src/laminar
+    - restore_cache:
+      keys:
+        - v1-dependencies-{{ checksum "requirements.txt" }}
+        - v1-dependencies-
+    - run:
+      name: Run tests
+      command: |
+        . venv/bin/activate
+        pwd
+        pytest -v . --log-file=./test_log.txt
+    - store_test_results:
+        path: ./test_log.txt
+
+workflows:
+  version: 2
+  build-test:
+    jobs:
+      - build
+      - test:
+        requires:
+          - build
 
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            pytest --cov -v
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+      # - run:
+      #     name: run tests
+      #     command: |
+      #       . venv/bin/activate
+      #       pytest --cov -v
+      #       coveralls
+      #
+      # - store_artifacts:
+      #     path: test-reports
+      #     destination: test-reports
