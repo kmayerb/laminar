@@ -1,3 +1,4 @@
+[![CircleCI](https://img.shields.io/circleci/build/github/dgellerup/laminar?token=8ecea183c3e45f955afdad617348f592d4fc4346)](https://circleci.com/gh/dgellerup/laminar/tree/master)
 ![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue)
 
 # laminar

@@ -29,7 +29,7 @@ def test_converter():
 
 
 def test_iter_flow():
-    result = laminar.iter_flow(le.single_total, le.laminar_df['Col1'])
+    result = laminar.iter_flow(le.single_total, le.laminar_df['Col1'], cores=8)
 
     assert result == {
                         'data[0-5]': 17,
@@ -67,7 +67,7 @@ def test_iter_flow():
 
     assert result.get('data[0-2]') == 4
 
-    result = laminar.iter_flow(le.multi_tally, le.laminar_df)
+    result = laminar.iter_flow(le.multi_tally, le.laminar_df, cores=8)
 
     assert result.get('data[0-5]') == 3
 
