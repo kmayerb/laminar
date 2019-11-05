@@ -64,10 +64,8 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-results
-            coverage run --omit="*/venv/*" -m pytest -v . --junitxml=test-results/pytest-report.xml
-            coverage report -i --omit="*/venv/*"
-            coverage html -i --omit="*/venv/*"
-
+            pytest -v --cov --log-file=./test_log.txt
+            
       - store_test_results:
           path: test-results
 
