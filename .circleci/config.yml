@@ -64,7 +64,7 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-results
-            pytest -v --cov ./test --log-file=./test_log.txt
+            pytest -v --cov ./test --log-file=./test_log.txt --junitxml=test-results/junit.xml
 
       - store_test_results:
           path: test-results
