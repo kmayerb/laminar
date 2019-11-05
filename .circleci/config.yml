@@ -82,9 +82,10 @@ workflows:
   build-test:
     jobs:
       - build
+
       - test:
-        requires:
-          - build
+          requires:
+            - build
 
       # run tests!
       # this example uses Django's built-in test-runner
