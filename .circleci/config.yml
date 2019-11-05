@@ -53,29 +53,29 @@ jobs:
 
     steps:
       - attach_worskspace:
-        at: /tmp/src/laminar
+          at: /tmp/src/laminar
 
       - restore_cache:
-        keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          - v1-dependencies-
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-
       - run:
-        name: Code Coverage report
-        command: |
-          . venv/bin/activate
-          mkdir test-results
-          coverage run --omit="*/venv/*" -m pytest -v . --junitxml=test-results/pytest-report.xml
-          coverage report -i --omit="*/venv/*"
-          coverage html -i --omit="*/venv/*"
+          name: Code Coverage report
+          command: |
+            . venv/bin/activate
+            mkdir test-results
+            coverage run --omit="*/venv/*" -m pytest -v . --junitxml=test-results/pytest-report.xml
+            coverage report -i --omit="*/venv/*"
+            coverage html -i --omit="*/venv/*"
 
       - store_test_results:
-        path: test-results
+          path: test-results
 
       - store_artifacts:
-        path: test-results
+          path: test-results
 
       - store_artifacts:
-        path: htmlcov
+          path: htmlcov
 
 workflows:
   version: 2.1
