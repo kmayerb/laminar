@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2.0
+version: 2.1
 jobs:
   build:
     docker:
@@ -28,7 +28,7 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: install dependencies
+          name: Build/Install dependencies
           command: |
             pip install virtualenv
             python3 -m virtualenv venv
@@ -39,32 +39,46 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+
       - persist_to_workspace:
           root: ~/laminar
           paths:
             - .
+
   test:
     docker:
       -image: circleci/python:3.7
+
     working_directory: /tmp/src/laminar
+
     steps:
-    - attach_workspace:
-      at: /tmp/src/laminar
+      - attach_workspace:
+          at: /tmp/src/laminar
+
     - restore_cache:
-      keys:
-        - v1-dependencies-{{ checksum "requirements.txt" }}
-        - v1-dependencies-
+        keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          - v1-dependencies-
     - run:
-      name: Run tests
-      command: |
-        . venv/bin/activate
-        pwd
-        pytest -v . --log-file=./test_log.txt
+        name: Code Coverage report
+        command: |
+          . venv/bin/activate
+          mkdir test-results
+          coverage run --omit="*/venv/*" -m pytest -v . --junitxml=test-results/pytest-report.xml
+          coverage report -i --omit="*/venv/*"
+          coverage html -i --omit="*/venv/*"
+
     - store_test_results:
-        path: ./test_log.txt
+        path: test-results
+
+    - store_artifacts:
+        path: test-results
+
+    -store_artifacts:
+        path: htmlcov
 
 workflows:
-  version: 2
+  version: 2.1
   build-test:
     jobs:
       - build
