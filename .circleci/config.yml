@@ -52,7 +52,7 @@ jobs:
     working_directory: /tmp/src/laminar
 
     steps:
-      - attach_workspace:
+      - attach_worskspace:
         at: /tmp/src/laminar
 
       - restore_cache:
@@ -74,7 +74,7 @@ jobs:
       - store_artifacts:
         path: test-results
 
-      -store_artifacts:
+      - store_artifacts:
         path: htmlcov
 
 workflows:
