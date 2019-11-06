@@ -1,4 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/build/github/dgellerup/laminar?token=8ecea183c3e45f955afdad617348f592d4fc4346)](https://circleci.com/gh/dgellerup/laminar/tree/master)
+[![CircleCI](https://img.shields.io/circleci/build/github/dgellerup/laminar?logo=circleci&token=8ecea183c3e45f955afdad617348f592d4fc4346)](https://circleci.com/gh/dgellerup/laminar/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/dgellerup/laminar/badge.svg?branch=master)](https://coveralls.io/github/dgellerup/laminar?branch=master)
 ![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue)
 
