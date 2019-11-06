@@ -78,6 +78,7 @@ or in the case of \*args with \*\*kwargs
 | `clear_processes()` | `None` | `None` | Removes all processes from instance process pool. |
 | `launch_processes()` | `None` | `str: "Processes finished."` | Run all instance processes in parallel. |
 | `get_results()` | `None` | `self.results: dict` | Returns the instance results dictionary. |
+| `clear_results()` | `None` | `None` | Removes all results from instance results dictionary. |
 
 ### Module Function Examples
 To illustrate how one would use laminar in their workflow, we'll use some premade functions and data structures located in `laminar_examples`. To shorten the following code examples up, we'll import `laminar_examples` as an alias `le` and use this alias throughout the rest of this readme.  

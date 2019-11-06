@@ -55,6 +55,9 @@ class Laminar:
     def get_results(self) -> dict:
         return self.results
     
+    def clear_results(self) -> None:
+        self.results = {}
+    
     def __converter(self, name: str, function: Callable, data_shard: Collection, *args) -> None:
         """Module function that calls the passed function with the passed data_shard
         as an argument, then places the result in the queue. Also passes through any
