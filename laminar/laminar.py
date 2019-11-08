@@ -24,12 +24,11 @@ class Laminar:
             new_process = Process(target=self.__converter, args=(name, function, dataset, args, kwargs))
             self._processes[name] = new_process
         
-    def show_processes(self) -> str:
+    def show_processes(self) -> None:
         proc_string = ""
         for key in self._processes.keys():
             proc_string = f"{proc_string + key}\n"
         print(proc_string)
-        return proc_string
         
     def drop_process(self, name: str) -> None:
         del self._processes[name]
