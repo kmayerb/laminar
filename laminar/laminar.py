@@ -163,7 +163,7 @@ def iter_flow(function: Callable, data: Collection, *args, **kwargs) -> dict:
         start = end + 1
         end += len(dataset)
         name = f"data[{start}-{end}]"
-        new_process = Process(target=__converter, args=(name, function, list(dataset), queue, args, kwargs))
+        new_process = Process(target=__converter, args=(name, function, dataset, queue, args, kwargs))
         processes.append(new_process)
     
     for p in processes:
