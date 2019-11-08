@@ -139,7 +139,7 @@ def test_my_lam(my_lam):
 
     proc = my_lam.show_processes()
 
-    assert proc == "cube2\ncube3\n"
+    assert proc == None
 
     my_lam.launch_processes()
 
