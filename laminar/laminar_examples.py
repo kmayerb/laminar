@@ -52,3 +52,4 @@ __df = pd.DataFrame({'Col1': [1, 2, 3, 4, 5], 'Col2': [6, 7, 8, 9, 10], 'Col3': 
 __increasing_df = [__df*i for i in range(1, 10)]
 laminar_df = pd.concat(__increasing_df)
 laminar_df.reset_index(drop=True, inplace=True)
+iris = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
