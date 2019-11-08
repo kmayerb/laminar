@@ -7,7 +7,6 @@ Created on Thu Nov  7 23:14:01 2019
 """
 
 import time
-from typing import Collection
 
 from laminar import laminar
 from laminar import laminar_examples as le
@@ -77,7 +76,6 @@ def num_recipes_ingredient(iterable, string: str) -> int:
         if string in ingredient_words:
             count+=1
     return count
-
 
 
 recipes = pd.read_csv('RAW_recipes.csv')
