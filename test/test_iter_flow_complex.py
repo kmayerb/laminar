@@ -87,7 +87,8 @@ def test_using_laminar_iterflow(n, cores):
                       data = ijs,
                       matrix = mat,
                       func = cosine_dist,
-                      cores= cores)
+                      cores= cores,
+                      sort_results = True)
     [print(k) for k in r.keys()]
     assert np.allclose(collapse(r), distances, atol=1e-3)
     return(r)
